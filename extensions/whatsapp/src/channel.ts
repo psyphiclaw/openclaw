@@ -20,6 +20,7 @@ import {
   resolveWhatsAppGroupToolPolicy,
 } from "./group-policy.js";
 import { looksLikeWhatsAppTargetId, normalizeWhatsAppMessagingTarget } from "./normalize.js";
+import { resolveWhatsAppReactionLevel } from "./reaction-level.js";
 import {
   createActionGate,
   createWhatsAppOutboundBase,
@@ -110,6 +111,19 @@ export const whatsappPlugin: ChannelPlugin<ResolvedWhatsAppAccount> =
       commands: {
         enforceOwnerForCommands: true,
         skipWhenConfigEmpty: true,
+      },
+      agentPrompt: {
+        reactionGuidance: ({ cfg, accountId }) => {
+          const gate = createActionGate(cfg.channels?.whatsapp?.actions);
+          if (!gate("reactions")) {
+            return undefined;
+          }
+          const level = resolveWhatsAppReactionLevel({
+            cfg,
+            accountId: accountId ?? undefined,
+          }).agentReactionGuidance;
+          return level ? { level, channelLabel: "WhatsApp" } : undefined;
+        },
       },
       messaging: {
         normalizeTarget: normalizeWhatsAppMessagingTarget,

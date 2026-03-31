@@ -428,6 +428,85 @@ describe("whatsapp group policy", () => {
   });
 });
 
+describe("whatsapp agent prompt", () => {
+  it("defaults to extensive reaction guidance when reactions are available", () => {
+    const cfg = {
+      channels: {
+        whatsapp: {
+          allowFrom: ["*"],
+        },
+      },
+    } as OpenClawConfig;
+
+    expect(
+      whatsappPlugin.agentPrompt?.reactionGuidance?.({
+        cfg,
+        accountId: DEFAULT_ACCOUNT_ID,
+      }),
+    ).toEqual({
+      level: "extensive",
+      channelLabel: "WhatsApp",
+    });
+  });
+
+  it("returns minimal reaction guidance when configured", () => {
+    const cfg = {
+      channels: {
+        whatsapp: {
+          reactionLevel: "minimal",
+          allowFrom: ["*"],
+        },
+      },
+    } as OpenClawConfig;
+
+    expect(
+      whatsappPlugin.agentPrompt?.reactionGuidance?.({
+        cfg,
+        accountId: DEFAULT_ACCOUNT_ID,
+      }),
+    ).toEqual({
+      level: "minimal",
+      channelLabel: "WhatsApp",
+    });
+  });
+
+  it("omits reaction guidance when WhatsApp reactions are disabled", () => {
+    const cfg = {
+      channels: {
+        whatsapp: {
+          actions: { reactions: false },
+          allowFrom: ["*"],
+        },
+      },
+    } as OpenClawConfig;
+
+    expect(
+      whatsappPlugin.agentPrompt?.reactionGuidance?.({
+        cfg,
+        accountId: DEFAULT_ACCOUNT_ID,
+      }),
+    ).toBeUndefined();
+  });
+
+  it("omits reaction guidance when reactionLevel disables agent reactions", () => {
+    const cfg = {
+      channels: {
+        whatsapp: {
+          reactionLevel: "ack",
+          allowFrom: ["*"],
+        },
+      },
+    } as OpenClawConfig;
+
+    expect(
+      whatsappPlugin.agentPrompt?.reactionGuidance?.({
+        cfg,
+        accountId: DEFAULT_ACCOUNT_ID,
+      }),
+    ).toBeUndefined();
+  });
+});
+
 describe("whatsappPlugin actions.handleAction react messageId resolution", () => {
   const baseCfg = {
     channels: { whatsapp: { actions: { reactions: true }, allowFrom: ["*"] } },

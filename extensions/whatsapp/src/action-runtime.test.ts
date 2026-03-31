@@ -11,6 +11,12 @@ const enabledConfig = {
 } as OpenClawConfig;
 
 describe("handleWhatsAppAction", () => {
+  function reactionConfig(reactionLevel: "minimal" | "extensive" | "off" | "ack"): OpenClawConfig {
+    return {
+      channels: { whatsapp: { actions: { reactions: true }, reactionLevel } },
+    } as OpenClawConfig;
+  }
+
   beforeEach(() => {
     vi.clearAllMocks();
     Object.assign(whatsAppActionRuntime, originalWhatsAppActionRuntime, {
@@ -27,6 +33,42 @@ describe("handleWhatsAppAction", () => {
         emoji: "✅",
       },
       enabledConfig,
+    );
+    expect(sendReactionWhatsApp).toHaveBeenLastCalledWith("+123", "msg1", "✅", {
+      verbose: false,
+      fromMe: undefined,
+      participant: undefined,
+      accountId: DEFAULT_ACCOUNT_ID,
+    });
+  });
+
+  it("adds reactions when reactionLevel is minimal", async () => {
+    await handleWhatsAppAction(
+      {
+        action: "react",
+        chatJid: "123@s.whatsapp.net",
+        messageId: "msg1",
+        emoji: "✅",
+      },
+      reactionConfig("minimal"),
+    );
+    expect(sendReactionWhatsApp).toHaveBeenLastCalledWith("+123", "msg1", "✅", {
+      verbose: false,
+      fromMe: undefined,
+      participant: undefined,
+      accountId: DEFAULT_ACCOUNT_ID,
+    });
+  });
+
+  it("adds reactions when reactionLevel is extensive", async () => {
+    await handleWhatsAppAction(
+      {
+        action: "react",
+        chatJid: "123@s.whatsapp.net",
+        messageId: "msg1",
+        emoji: "✅",
+      },
+      reactionConfig("extensive"),
     );
     expect(sendReactionWhatsApp).toHaveBeenLastCalledWith("+123", "msg1", "✅", {
       verbose: false,
@@ -110,6 +152,26 @@ describe("handleWhatsAppAction", () => {
       ),
     ).rejects.toThrow(/WhatsApp reactions are disabled/);
   });
+
+  it.each(["off", "ack"] as const)(
+    "blocks agent reactions when reactionLevel is %s",
+    async (reactionLevel) => {
+      await expect(
+        handleWhatsAppAction(
+          {
+            action: "react",
+            chatJid: "123@s.whatsapp.net",
+            messageId: "msg1",
+            emoji: "✅",
+          },
+          reactionConfig(reactionLevel),
+        ),
+      ).rejects.toThrow(
+        new RegExp(`WhatsApp agent reactions disabled \\(reactionLevel=\"${reactionLevel}\"\\)`),
+      );
+      expect(sendReactionWhatsApp).not.toHaveBeenCalled();
+    },
+  );
 
   it("applies default account allowFrom when accountId is omitted", async () => {
     const cfg = {

@@ -384,6 +384,10 @@ Behavior notes:
 - Action gates:
   - `channels.whatsapp.actions.reactions`
   - `channels.whatsapp.actions.polls`
+- `channels.whatsapp.reactionLevel`: `off | ack | minimal | extensive` — control agent reaction capability and guidance (default: `extensive` when not set).
+  - `off`/`ack` disables agent reactions (`message action=react` will error).
+  - `minimal`/`extensive` enables agent reactions and sets the guidance level.
+- Per-account override: `channels.whatsapp.accounts.<id>.reactionLevel`.
 - Channel-initiated config writes are enabled by default (disable via `channels.whatsapp.configWrites=false`).
 
 ## Troubleshooting

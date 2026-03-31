@@ -1,5 +1,6 @@
 import type { AgentToolResult } from "@mariozechner/pi-agent-core";
 import { resolveAuthorizedWhatsAppOutboundTarget } from "./action-runtime-target-auth.js";
+import { resolveWhatsAppReactionLevel } from "./reaction-level.js";
 import {
   createActionGate,
   jsonResult,
@@ -22,6 +23,17 @@ export async function handleWhatsAppAction(
   const isActionEnabled = createActionGate(cfg.channels?.whatsapp?.actions);
 
   if (action === "react") {
+    const accountId = readStringParam(params, "accountId");
+    const reactionLevelInfo = resolveWhatsAppReactionLevel({
+      cfg,
+      accountId: accountId ?? undefined,
+    });
+    if (!reactionLevelInfo.agentReactionsEnabled) {
+      throw new Error(
+        `WhatsApp agent reactions disabled (reactionLevel="${reactionLevelInfo.level}"). ` +
+          `Set channels.whatsapp.reactionLevel to "minimal" or "extensive" to enable.`,
+      );
+    }
     if (!isActionEnabled("reactions")) {
       throw new Error("WhatsApp reactions are disabled.");
     }
@@ -31,7 +43,6 @@ export async function handleWhatsAppAction(
       removeErrorMessage: "Emoji is required to remove a WhatsApp reaction.",
     });
     const participant = readStringParam(params, "participant");
-    const accountId = readStringParam(params, "accountId");
     const fromMeRaw = params.fromMe;
     const fromMe = typeof fromMeRaw === "boolean" ? fromMeRaw : undefined;
 
