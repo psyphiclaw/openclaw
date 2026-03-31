@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>{{ meta.project_name }} — 多模态分析报告</title>
+<style>
+:root {
+  --primary: #4A90D9;
+  --danger: #E74C3C;
+  --bg: #ffffff;
+  --text: #1a1a2e;
+  --muted: #6c757d;
+  --border: #dee2e6;
+  --card-bg: #f8f9fa;
+  --sidebar-w: 260px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Microsoft YaHei', 'PingFang SC', 'Segoe UI', sans-serif;
+  color: var(--text);
+  background: var(--bg);
+  line-height: 1.8;
+  display: flex;
+  min-height: 100vh;
+}
+nav.toc {
+  position: fixed;
+  top: 0; left: 0;
+  width: var(--sidebar-w);
+  height: 100vh;
+  background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
+  color: #e0e0e0;
+  padding: 2rem 1.5rem;
+  overflow-y: auto;
+  z-index: 100;
+}
+nav.toc h2 { color: var(--primary); font-size: 1.1rem; margin-bottom: 1rem; letter-spacing: 1px; }
+nav.toc ul { list-style: none; }
+nav.toc li { margin-bottom: 0.4rem; }
+nav.toc a { color: #b0b0b0; text-decoration: none; font-size: 0.9rem; transition: color 0.2s; }
+nav.toc a:hover { color: var(--primary); }
+main {
+  margin-left: var(--sidebar-w);
+  flex: 1;
+  padding: 3rem 4rem;
+  max-width: 900px;
+}
+.report-header {
+  border-bottom: 3px solid var(--primary);
+  padding-bottom: 1.5rem;
+  margin-bottom: 2rem;
+}
+.report-header h1 { font-size: 2rem; color: var(--primary); margin-bottom: 0.5rem; }
+.report-header .subtitle { color: var(--muted); font-size: 1rem; }
+.meta-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+.meta-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem;
+  border-left: 4px solid var(--primary);
+}
+.meta-card .label { font-size: 0.8rem; color: var(--muted); letter-spacing: 1px; }
+.meta-card .value { font-size: 1.4rem; font-weight: 700; color: var(--text); margin-top: 0.25rem; }
+.section { margin-bottom: 2.5rem; }
+.section h2 {
+  color: var(--primary);
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border);
+}
+.section .body { white-space: pre-wrap; font-size: 0.95rem; }
+.figure-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 1.5rem;
+  margin: 1.5rem 0;
+}
+.figure-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.figure-card img { width: 100%; height: auto; display: block; }
+.figure-card .caption {
+  padding: 0.75rem 1rem;
+  font-size: 0.85rem;
+  color: var(--muted);
+  font-style: italic;
+}
+.figure-card .section-tag {
+  display: inline-block;
+  background: var(--primary);
+  color: #fff;
+  font-size: 0.7rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+  margin-right: 0.5rem;
+}
+.unconfirmed-list {
+  background: #fff3cd;
+  border: 1px solid #ffc107;
+  border-radius: 6px;
+  padding: 1rem;
+  margin: 1rem 0;
+  font-size: 0.85rem;
+}
+.unconfirmed-list summary { cursor: pointer; font-weight: 600; color: #856404; }
+.report-footer {
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+  text-align: center;
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+@media print {
+  nav.toc { display: none; }
+  main { margin-left: 0; padding: 1rem; }
+  .figure-card { break-inside: avoid; }
+}
+@media (max-width: 900px) {
+  nav.toc { position: static; width: 100%; height: auto; padding: 1rem; }
+  body { flex-direction: column; }
+  main { margin-left: 0; padding: 1.5rem; }
+  .figure-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<nav class="toc">
+  <h2>📑 目录</h2>
+  <ul>
+    {% for key, sec in sections.items() %}
+    <li><a href="#sec-{{ key }}">{{ sec.title }}</a></li>
+    {% endfor %}
+  </ul>
+</nav>
+
+<main>
+  <header class="report-header">
+    <h1>{{ meta.project_name }}</h1>
+    <div class="subtitle">多模态行为分析报告 &bull; {{ meta.date }}</div>
+  </header>
+
+  <div class="meta-grid">
+    <div class="meta-card">
+      <div class="label">被试数量</div>
+      <div class="value">{{ meta.subjects_count }}</div>
+    </div>
+    <div class="meta-card">
+      <div class="label">数据模态</div>
+      <div class="value">{{ meta.modalities | join('、') or '无' }}</div>
+    </div>
+    <div class="meta-card">
+      <div class="label">数据文件</div>
+      <div class="value">{{ meta.data_files_count }}</div>
+    </div>
+    <div class="meta-card">
+      <div class="label">图表数量</div>
+      <div class="value">{{ meta.figure_files_count }}</div>
+    </div>
+  </div>
+
+  {% for key, sec in sections.items() %}
+  <div class="section" id="sec-{{ key }}">
+    <h2>{{ sec.title }}</h2>
+    <div class="body">{{ sec.body }}</div>
+  </div>
+  {% endfor %}
+
+  {% if figures %}
+  <div class="section" id="sec-figures">
+    <h2>图表</h2>
+    <div class="figure-grid">
+      {% for fig in figures %}
+      <div class="figure-card">
+        {% if 'MISSING' not in fig.data_uri %}
+        <img src="{{ fig.data_uri }}" alt="{{ fig.caption }}">
+        {% endif %}
+        <div class="caption">
+          <span class="section-tag">{{ fig.section }}</span>
+          {{ fig.caption }}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  <footer class="report-footer">
+    由 PsyPhiClaw Analysis Report 生成 &bull; {{ meta.date }}
+  </footer>
+</main>
+</body>
+</html>

@@ -1,0 +1,48 @@
+name: "默认分析流程"
+description: "多被试实验数据的标准分析流程（导入→预处理→分析→可视化）"
+
+subjects:
+  # 手动指定被试列表，或留空让 scan_project 自动检测
+  - "001"
+  - "002"
+  - "003"
+
+modalities:
+  - eeg
+  - behavioral
+
+steps:
+  # 步骤1: 数据预处理
+  - name: "preprocess"
+    type: "command"
+    description: "数据预处理（滤波、重参考）"
+    command: "python scripts/preprocess.py --subject {subject_id} --input-dir {input_dir} --output-dir {output_dir}"
+
+  # 步骤2: 特征提取
+  - name: "features"
+    type: "command"
+    description: "提取时频特征"
+    command: "python scripts/extract_features.py --subject {subject_id} --input-dir {output_dir}/preprocess --output-dir {output_dir}"
+
+  # 步骤3: 统计分析
+  - name: "statistics"
+    type: "command"
+    description: "组内统计检验"
+    command: "python scripts/run_stats.py --subject {subject_id} --input-dir {output_dir}/features --output-dir {output_dir}"
+
+  # 步骤4: 可视化
+  - name: "visualize"
+    type: "command"
+    description: "生成结果图表"
+    command: "python scripts/visualize.py --subject {subject_id} --input-dir {output_dir}/statistics --output-dir {output_dir}"
+
+output_format:
+  figures: "pdf"
+  tables: "csv"
+  data: "parquet"
+  dpi: 300
+
+report:
+  title: "实验汇总报告"
+  include_group_stats: true
+  include_figures: true

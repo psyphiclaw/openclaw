@@ -1,0 +1,50 @@
+{
+  "nature": {
+    "width_in": 6.85,
+    "width_mm": 174,
+    "height_in": null,
+    "dpi": 300,
+    "font_family": "Arial",
+    "font_size": 7,
+    "line_width": 0.5,
+    "color_space": "CMYK",
+    "max_figures": 8,
+    "notes": "Nature 单栏宽度 89mm，双栏宽度 174mm（推荐）。最小字体 5pt。"
+  },
+  "science": {
+    "width_in": 5.5,
+    "width_mm": 140,
+    "height_in": null,
+    "dpi": 300,
+    "font_family": "Arial",
+    "font_size": 7,
+    "line_width": 0.5,
+    "color_space": "CMYK",
+    "max_figures": 6,
+    "notes": "Science 单栏宽度 55mm，双栏宽度 120mm，全宽 140mm。"
+  },
+  "apa": {
+    "width_in": 6.5,
+    "width_mm": 165,
+    "height_in": 4.5,
+    "dpi": 300,
+    "font_family": "Times New Roman",
+    "font_size": 12,
+    "line_width": 1.0,
+    "color_space": "Grayscale",
+    "max_figures": null,
+    "notes": "APA 7th 允许彩色但推荐灰度。标准字体 12pt。最大宽度 6.5 in (165mm)。"
+  },
+  "ieee": {
+    "width_in": 3.5,
+    "width_mm": 89,
+    "height_in": 2.5,
+    "dpi": 600,
+    "font_family": "Times New Roman",
+    "font_size": 8,
+    "line_width": 0.5,
+    "color_space": "RGB",
+    "max_figures": null,
+    "notes": "IEEE 单栏 3.5 in (89mm)，双栏 7.16 in。推荐 600 DPI。"
+  }
+}
