@@ -1,0 +1,60 @@
+# PsyPhiClaw Daily Paper Configuration Template
+
+# ── Search Keywords ──────────────────────────────────────────
+keywords:
+  - "multimodal emotion recognition"
+  - "EEG eye-tracking fusion"
+  - "facial expression analysis deep learning"
+  - "fNIRS neuroimaging"
+  - "physiological signal classification"
+  - "affective computing"
+  - "EEG-based emotion"
+  - "pupillometry arousal"
+  - "skin conductance response"
+  - "cross-modal behavioral analysis"
+
+# ── Source-Specific Keywords ────────────────────────────────
+pubmed_keywords:
+  - "multimodal AND (EEG OR eye-tracking) AND emotion"
+  - "fNIRS AND (prefrontal OR emotion)"
+  - "facial EMG AND affective"
+  - "physiological AND multimodal AND human"
+
+arxiv_keywords:
+  - "multimodal emotion recognition"
+  - "EEG-based affective computing"
+  - "physiological signal fusion deep learning"
+
+# ── arXiv Categories ───────────────────────────────────────
+arxiv_categories:
+  - cs.CV      # Computer Vision
+  - q-bio.NC   # Neurons and Cognition
+  - eess.SP    # Signal Processing
+  - cs.HC      # Human-Computer Interaction
+  - cs.AI      # Artificial Intelligence
+
+# ── Schedule ───────────────────────────────────────────────
+schedule:
+  cron: "0 9 * * 1-5"  # Weekdays 9:00 AM
+  timezone: "Asia/Shanghai"
+  days_back: 7          # Look back 7 days
+  max_results: 20       # Per source
+  top_n: 5              # Papers in digest
+
+# ── Push Channels ──────────────────────────────────────────
+push:
+  enabled: false
+  channels:
+    # - type: discord
+    #   webhook: "https://discord.com/api/webhooks/..."
+    # - type: wecom
+    #   webhook: "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=..."
+    # - type: email
+    #   to: "researcher@example.com"
+    #   smtp_host: "smtp.gmail.com"
+    #   smtp_port: 587
+
+# ── API Keys (optional) ────────────────────────────────────
+api_keys:
+  # ncbi: "your_ncbi_api_key"         # Higher PubMed rate limit
+  # semantic_scholar: "your_s2_key"  # Higher S2 rate limit
